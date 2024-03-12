@@ -1,0 +1,3 @@
+---
+nginx_docker_requirements:
+  - docker==7.0.0

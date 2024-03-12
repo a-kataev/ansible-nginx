@@ -1,0 +1,19 @@
+---
+nginx_docker_image_repository: nginx
+nginx_docker_image_tag: 1.25.4-alpine
+
+nginx_docker_container_name: nginx
+nginx_docker_port: 80
+
+nginx_docker_host: unix:///var/run/docker.sock
+
+nginx_docker_config_dir: /etc/nginx/conf.d
+
+nginx_docker_servers:
+  - name: test1
+  - name: test2
+
+nginx_docker_server_config: |-
+  location / {
+    return 200 "ok";
+  }

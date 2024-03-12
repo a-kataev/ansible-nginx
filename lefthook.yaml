@@ -1,0 +1,8 @@
+pre-commit:
+  commands:
+    yamllint:
+      files: find . -name '*.yml'
+      run: pipenv run yamllint -f colored {files}
+    ansible-lint:
+      files: find . -name '*.yml'
+      run: pipenv run ansible-lint -f full {files}

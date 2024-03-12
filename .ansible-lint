@@ -1,0 +1,5 @@
+---
+profile: production
+quiet: true
+strict: true
+offline: true

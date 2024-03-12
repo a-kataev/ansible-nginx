@@ -1,0 +1,30 @@
+---
+- name: Вытягивание образа nginx
+  community.docker.docker_image_pull:
+    name: "{{ nginx_docker_image_repository }}"
+    tag: "{{ nginx_docker_image_tag }}"
+    docker_host: "{{ nginx_docker_host }}"
+
+- name: Создание директории для конфигурации nginx
+  ansible.builtin.file:
+    path: "{{ nginx_docker_config_dir }}"
+    state: directory
+    mode: 0755
+
+- name: Создание контейнера nginx
+  community.docker.docker_container:
+    name: "{{ nginx_docker_container_name }}"
+    image: "{{ nginx_docker_image_repository }}:{{ nginx_docker_image_tag }}"
+    ports:
+      - "{{ nginx_docker_port }}:80"
+    volumes:
+      - "{{ nginx_docker_config_dir }}:/etc/nginx/conf.d"
+    pull: false
+    state: present
+    docker_host: "{{ nginx_docker_host }}"
+
+- name: Запуск контейнера nginx
+  community.docker.docker_container:
+    name: "{{ nginx_docker_container_name }}"
+    state: started
+    docker_host: "{{ nginx_docker_host }}"
