@@ -1,0 +1,19 @@
+---
+- name: Проверки
+  ansible.builtin.import_tasks: preflight.yml
+
+- name: Установка
+  ansible.builtin.import_tasks: install.yml
+  tags:
+    - install
+
+- name: Конфигурация
+  ansible.builtin.import_tasks: configure.yml
+  tags:
+    - install
+    - configure
+
+- name: Удаление
+  ansible.builtin.import_tasks: uninstall.yml
+  tags:
+    - uninstall

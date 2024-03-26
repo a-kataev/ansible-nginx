@@ -1,0 +1,16 @@
+server {
+  listen 80 default_server;
+  server_name _;
+  return 403;
+}
+
+{% for server in nginx_docker_servers | default([]) %}
+{% if server.name is defined %}
+server {
+  listen 80;
+  server_name {{ server.name }};
+
+  {{ nginx_docker_server_snippet | indent(2) }}
+}
+{% endif %}
+{% endfor %}

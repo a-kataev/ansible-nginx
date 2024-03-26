@@ -1,0 +1,7 @@
+---
+- name: Остановка и удаление контейнера nginx
+  community.docker.docker_container:
+    name: "{{ nginx_docker_container_name }}"
+    force_kill: true
+    state: absent
+    docker_host: "{{ nginx_docker_host }}"

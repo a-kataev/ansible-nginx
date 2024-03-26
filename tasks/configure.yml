@@ -1,0 +1,54 @@
+---
+- name: Проверка конфигурации nginx
+  community.docker.docker_container_exec:
+    container: "{{ nginx_docker_container_name }}"
+    command: nginx -t
+    docker_host: "{{ nginx_docker_host }}"
+
+- name: Создание конфигурации nginx
+  block:
+    - name: Создание бэкапа текущего конфига для nginx
+      ansible.builtin.copy:
+        src: "{{ nginx_docker_config_dir }}/default.conf"
+        dest: "{{ nginx_docker_config_dir }}/default.conf.backup"
+        mode: 0644
+        remote_src: true
+
+    - name: Создание нового конфига для nginx из шаблона
+      ansible.builtin.template:
+        src: default.conf.j2
+        dest: "{{ nginx_docker_config_dir }}/default.conf"
+        mode: 0644
+      register: make_config
+
+    - name: Проверка конфигурации nginx # noqa: no-handler
+      community.docker.docker_container_exec:
+        container: "{{ nginx_docker_container_name }}"
+        command: nginx -t
+        docker_host: "{{ nginx_docker_host }}"
+      when: make_config.changed
+
+    - name: Применение конфигурации nginx # noqa: no-handler
+      community.docker.docker_container_exec:
+        container: "{{ nginx_docker_container_name }}"
+        command: nginx -s reload
+        docker_host: "{{ nginx_docker_host }}"
+      when: make_config.changed
+  rescue:
+    - name: Восстановление бэкапа текущего конфига для nginx
+      ansible.builtin.copy:
+        src: "{{ nginx_docker_config_dir }}/default.conf.backup"
+        dest: "{{ nginx_docker_config_dir }}/default.conf"
+        mode: 0644
+        remote_src: true
+
+- name: Проверка доступности серверов nginx
+  ansible.builtin.uri:
+    url: "http://127.1:{{ nginx_docker_port }}"
+    follow_redirects: none
+    method: GET
+    headers:
+      host: "{{ item.name }}"
+  register: result
+  failed_when: result.status != 200
+  loop: "{{ nginx_docker_servers }}"

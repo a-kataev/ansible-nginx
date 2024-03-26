@@ -1,0 +1,14 @@
+---
+- name: Проверка тегов
+  ansible.builtin.fail:
+    msg: Используйте теги для запуска
+
+- name: Установка зависимостей для работы с docker
+  ansible.builtin.pip:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ nginx_docker_requirements }}"
+  tags:
+    - install
+    - configure
+    - uninstall
