@@ -10,7 +10,7 @@ server {
   listen 80;
   server_name {{ server.name }};
 
-  {{ nginx_docker_server_config | indent(2) }}
+  {{ nginx_docker_server_snippet | indent(2) }}
 }
 {% endif %}
 {% endfor %}

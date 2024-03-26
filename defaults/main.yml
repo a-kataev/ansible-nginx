@@ -13,7 +13,7 @@ nginx_docker_servers:
   - name: test1
   - name: test2
 
-nginx_docker_server_config: |-
+nginx_docker_server_snippet: |-
   location / {
     return 200 "ok";
   }
